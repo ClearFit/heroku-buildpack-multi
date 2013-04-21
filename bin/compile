@@ -2,7 +2,7 @@
 
 set -e
 
-function indent() {
+function ident() {
   c='s/^/       /'
   case $(uname) in
     Darwin) sed -l "$c";;
@@ -49,5 +49,5 @@ for BUILDPACK in $(cat $1/.buildpacks); do
   fi
 done
 
-echo "Using release configuration from last framework $framework:" | indent
-cat $1/last_pack_release.out | indent
+echo "Using release configuration from last framework $framework:" | ident
+cat $1/last_pack_release.out | ident
