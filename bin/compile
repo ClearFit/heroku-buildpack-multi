@@ -2,22 +2,25 @@
 
 set -e
 
-function ident() {
-  c='s/^/       /'
-  case $(uname) in
-    Darwin) sed -l "$c";;
-    *)      sed -u "$c";;
-  esac
+indent() {
+  sed -u 's/^/       /'
 }
 
 unset GIT_DIR
 
+echo "arg 1: $1" | indent
+echo "arg 2: $2" | indent
+
 for BUILDPACK in $(cat $1/.buildpacks); do
   dir=$(mktemp -t buildpack.XXXXX)
   rm -rf $dir
+  echo "temp dir: $dir" | indent
 
   url=${BUILDPACK%#*}
+  echo "url: $url" | indent
+
   branch=${BUILDPACK#*#}
+  echo "branch: $branch" | indent
 
   if [ "$branch" == "$url" ]; then
     branch=""
@@ -25,7 +28,7 @@ for BUILDPACK in $(cat $1/.buildpacks); do
 
   if [ "$url" != "" ]; then
     echo "=====> Downloading Buildpack: $url"
-    git clone $url $dir >/dev/null 2>&1
+    git clone --verbose $url $dir 
     cd $dir
 
     if [ "$branch" != "" ]; then
@@ -49,5 +52,6 @@ for BUILDPACK in $(cat $1/.buildpacks); do
   fi
 done
 
-echo "Using release configuration from last framework $framework:" | ident
-cat $1/last_pack_release.out | ident
+echo "Using release configuration from last framework $framework:" | indent
+cat $1/last_pack_release.out | indent
+
